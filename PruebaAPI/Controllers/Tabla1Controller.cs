@@ -1,0 +1,98 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
+using PruebaAPI.Data;
+using PruebaAPI.Models;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace PruebaAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class Tabla1Controller : ControllerBase
+    {
+        private readonly AppDbContext _db;
+
+        public Tabla1Controller(AppDbContext db)
+        {
+            _db = db;
+        }
+
+        // GET: api/<Tabla1Controller>
+        [HttpGet]
+        public async Task<ActionResult> Get()
+        {
+            var data = await _db.Tabla1.ToListAsync();
+            return Ok(data);
+
+        }
+
+        // GET api/<Tabla1Controller>/5
+        [HttpGet("{id}")]
+        public string Get(int id)
+        {
+            return "value";
+        }
+
+        // POST api/<Tabla1Controller>
+        [HttpPost]
+        public async Task<ActionResult> Post([FromBody] Tabla1 registro)
+        {
+            _db.Tabla1.Add(registro);
+            await _db.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(Get), new { id = registro.Id },
+                new {
+                    Ok = true,
+                    Message = "Registro creado exitosamente",
+                    Data = registro
+                });
+
+        }
+
+        // PUT api/<Tabla1Controller>/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody] Tabla1 registro)
+        {
+
+            var consulta = await _db.Tabla1.Where(x => x.Id == id).FirstOrDefaultAsync();
+
+            consulta.Nombre = registro.Nombre;
+            consulta.Apellido = registro.Apellido;
+
+
+            _db.Entry(consulta).State = EntityState.Modified;
+            await _db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Ok = true,
+                Message = "Registro actualizado exitosamente",
+                Data = registro
+            });
+        }
+
+        // DELETE api/<Tabla1Controller>/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var consulta = await _db.Tabla1.FindAsync(id);
+            if (consulta == null)
+            {
+                return NotFound();
+            }
+
+            _db.Tabla1.Remove(consulta);
+            await _db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Ok = true,
+                Message = "Registro eliminado exitosamente",
+                Data = consulta
+            });
+        }
+    }
+}
+
