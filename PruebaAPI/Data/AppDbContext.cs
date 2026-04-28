@@ -17,9 +17,9 @@ namespace PruebaAPI.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Tabla1>().HasData(
-                new Tabla1 { Id = 1, Nombre = "Juan", Apellido = "Pérez" },
-                new Tabla1 { Id = 2, Nombre = "María", Apellido = "Gómez" },
-                new Tabla1 { Id = 3, Nombre = "Carlos", Apellido = "López" }
+                new Tabla1 { Id = 1, Nombre = "Juan", Apellido = "Pérez", Descripcion = "Descripción de Juan" },
+                new Tabla1 { Id = 2, Nombre = "María", Apellido = "Gómez", Descripcion = "Descripción de María" },
+                new Tabla1 { Id = 3, Nombre = "Carlos", Apellido = "López", Descripcion = "Descripción de Carlos" }
             );
 
 

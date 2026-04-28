@@ -29,10 +29,20 @@ namespace PruebaAPI.Controllers
         }
 
         // GET api/<Tabla1Controller>/5
+        //[HttpGet("{id}")]
+        //public string Get(int id)
+        //{
+        //    return "value";
+        //}
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var consulta = await _db.Tabla1.Where(p => p.Id == id).ToListAsync();
+            if (consulta == null || consulta.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(new { exito = true, consulta });
         }
 
         // POST api/<Tabla1Controller>
@@ -43,7 +53,8 @@ namespace PruebaAPI.Controllers
             await _db.SaveChangesAsync();
 
             return CreatedAtAction(nameof(Get), new { id = registro.Id },
-                new {
+                new
+                {
                     Ok = true,
                     Message = "Registro creado exitosamente",
                     Data = registro
@@ -60,6 +71,7 @@ namespace PruebaAPI.Controllers
 
             consulta.Nombre = registro.Nombre;
             consulta.Apellido = registro.Apellido;
+            consulta.Descripcion = registro.Descripcion;
 
 
             _db.Entry(consulta).State = EntityState.Modified;
@@ -93,6 +105,56 @@ namespace PruebaAPI.Controllers
                 Data = consulta
             });
         }
+
+        [HttpPatch("{id}")]// PATCH api/<Tabla1Controller>/5
+        public async Task<ActionResult> PatchTabla1(int id, [FromBody] Dictionary<string, object> actual)
+        {
+            var registro = await _db.Tabla1.FindAsync(id);
+
+            foreach (var item in actual)
+            {
+                switch (item.Key.ToLower())
+                {
+                    case "nombre":
+                        registro.Nombre = item.Value.ToString();
+                        break;
+                    case "apellido":
+                        registro.Apellido = item.Value.ToString();
+                        break;
+                    case "descripcion":
+                        registro.Descripcion = item.Value.ToString();
+                        break;
+                }
+            }
+
+            await _db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Ok = true,
+                Message = "Registro actualizado exitosamente",
+                Data = registro
+            });
+        }
+
+        //private int convierteEnEntero(object value)
+        //{
+        //    if (value == null)
+        //        return 0;
+
+
+        //    if (value is JsonContent elementojson)
+        //    {
+        //        return elementojson.GetInt32();
+        //    }
+
+        //    if (value is string cadenavalor)
+        //    {
+        //        return int.Parse(cadenavalor);
+        //    }
+
+        //    return Convert.ToInt32(value);
+        //}
     }
 }
 

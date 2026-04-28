@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using PruebaAPI.Data;
 using PruebaAPI.Models;
+using System;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,9 +31,14 @@ namespace PruebaAPI.Controllers
 
         // GET api/<UsuariosController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var consulta = await _db.Usuarios.Where(p => p.Id == id).ToListAsync();
+            if (consulta == null || consulta.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(new { exito = true, consulta });
         }
 
         // POST api/<UsuariosController>
@@ -105,5 +111,58 @@ namespace PruebaAPI.Controllers
                 Data = consulta
             });
         }
+
+        [HttpPatch("{id}")]// PATCH api/<Tabla1Controller>/5
+        public async Task<ActionResult> PatchUsuario(int id, [FromBody] Dictionary<string, object> actual)
+        {
+            var registro = await _db.Usuarios.FindAsync(id);
+
+            foreach (var item in actual)
+            {
+                switch (item.Key.ToLower())
+                {
+                    case "edad":
+                        registro.Edad = Convert.ToInt32(item.Value);
+                        break;
+                    case "nombre":
+                        registro.Nombre = item.Value.ToString();
+                        break;
+                    case "apellido":
+                        registro.Matricula = Convert.ToInt32(item.Value);
+                        break;
+                    case "descripcion":
+                        registro.Tipo = Convert.ToInt32(item.Value);
+                        break;
+                }
+            }
+
+            await _db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Ok = true,
+                Message = "Registro actualizado exitosamente",
+                Data = registro
+            });
+        }
+
+        //private int convierteEnEntero(object value)
+        //{
+        //    if (value == null)
+        //        return 0;
+
+
+        //    if (value is JsonContent elementojson)
+        //    {
+        //        return elementojson.GetInt32();
+        //    }
+
+        //    if (value is string cadenavalor)
+        //    {
+        //        return int.Parse(cadenavalor);
+        //    }
+
+        //    return Convert.ToInt32(value);
+        //}
     }
 }
