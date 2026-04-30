@@ -23,25 +23,17 @@ namespace PruebaAPI.Controllers
         [HttpGet]
         public async Task<ActionResult> Get()
         {
-            var data = await _db.Tabla1.ToListAsync();
-            return Ok(data);
+            var consulta = await _db.Tabla1.ToListAsync();
+            return Ok(new { exito = true, consulta });
 
         }
 
-        // GET api/<Tabla1Controller>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
+
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var consulta = await _db.Tabla1.Where(p => p.Id == id).ToListAsync();
-            if (consulta == null || consulta.Count == 0)
-            {
-                return NotFound();
-            }
+            var consulta = await _db.Tabla1.Where(p => p.Id.Equals(id)).ToListAsync();
+
             return Ok(new { exito = true, consulta });
         }
 
@@ -67,7 +59,7 @@ namespace PruebaAPI.Controllers
         public async Task<ActionResult> Put(int id, [FromBody] Tabla1 registro)
         {
 
-            var consulta = await _db.Tabla1.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var consulta = await _db.Tabla1.FirstOrDefaultAsync();
 
             consulta.Nombre = registro.Nombre;
             consulta.Apellido = registro.Apellido;
