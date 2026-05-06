@@ -127,10 +127,10 @@ namespace PruebaAPI.Controllers
                     case "nombre":
                         registro.Nombre = item.Value.ToString();
                         break;
-                    case "apellido":
+                    case "matricula":
                         registro.Matricula = Convert.ToInt32(item.Value);
                         break;
-                    case "descripcion":
+                    case "tipo":
                         registro.Tipo = Convert.ToInt32(item.Value);
                         break;
                 }
